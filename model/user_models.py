@@ -1,9 +1,13 @@
 import mysql.connector
-from configs.config import dbconfig
+from configs.config import dbconfig,RESPONSE_HEADER
 import sys
 import json
-from flask import request
+from flask import request,make_response
 
+""""
+make_response() gives you a convenience interface, 
+one that will take arguments in more formats than the flask.Response() object takes
+"""
 
 class user_model():
     # create the connection in constructor so whenever we need the connection of the mysql we can access
@@ -20,20 +24,22 @@ class user_model():
         self.cur = self.con.cursor(dictionary=True) # cursor is agent
         
     def user_getall_model(self):
+
         self.cur.execute("SELECT * FROM user")
         data = self.cur.fetchall()
         if len(data)>0:
-            return {'payload':data}  # header response will create application-type:application/json
+            res= make_response({'payload':data},200) #200 for ok, header response will create application-type:application/json
+            return res
         else:
-            return {'payload':"No data Found in database"} 
-        # query = (f"SELECT name,email,role,password FROM {self.database1}")
+            return make_response({'payload':"No data Found in database"},204) #204 for no-content
+            # because of 204 will not send the payload no content mean no content
         
         
     def user_addone_model(self,data):
         self.cur.execute(f"INSERT INTO USER(id,name,email,phone,role,password) \
                          VALUES('{data['id']}','{data['name']}','{data['email']}','{data['phone']}','{data['role']}','{data['password']}')")
         
-        return {'payload':"Successful"}
+        return make_response({'payload':"Successfully Sumbited"},201)
     
     
 
@@ -41,13 +47,13 @@ class user_model():
         self.cur.execute(f"UPDATE user SET id='{data['id']}',name='{data['name']}',email='{data['email']}',phone='{data['phone']}',role='{data['role']}',password='{data['password']}' \
                           WHERE id={data['id']}")
         if self.cur.rowcount>0:
-            return {'payload':"Detail Updated"}
+            return make_response({'payload':"Detail Updated"},201)
         else:
-            return {'payload':"Detail Not Updated"}
+            return make_response({'payload':"Detail Not Updated"},202) #reauest cannot to be process 
 
 
     def user_delete_model(self,id):
         self.cur.execute(f"DELETE FROM user WHERE id={id}")
         
-        return {'payload': "Detail has been deleted" }
+        return make_response({'payload': "Detail has been deleted" },200)
 
