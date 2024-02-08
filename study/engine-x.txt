@@ -1,0 +1,23 @@
+VPN: It vertual private network(it is proxy server)
+VPN stands for "Virtual Private Network" and describes the opportunity to establish a protected network connection when using public networks
+
+
+A VPN hides your IP address by letting the network redirect it through a specially configured remote server run by a VPN host. This means that if you surf online with a VPN, the VPN server becomes the source of your data. This means your Internet Service Provider (ISP) and other third parties cannot see which websites you visit or what data you send and receive online. A VPN works like a filter that turns all your data into "gibberish". Even if someone were to get their hands on your data, it would be useless.
+
+
+Nginx, pronounced like “engine-ex”, is an open-source web server that, since its initial success as a web server, is now also used as a reverse proxy, HTTP cache, and load balancer.
+forward proxy:
+n-number of user ---->VPN----->single orignal server(nodejs,flask)
+
+reverse proxy:
+one user ----->VPN-----> number of original server 
+
+nginx :is the most popualr proxy server(nginx is middle server)
+
+nginx can do:
+ - reverse proxy
+ - api getway
+ - Load Balance
+ - HTTP cache (if suppose user one requested for the some information(eg.image) then the nginx server will take the image from the original server and return to the user
+               but if another user want same image then it will return from the cache of nginx server )
+

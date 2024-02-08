@@ -15,9 +15,8 @@ class user_model():
         host1=dbconfig['host']
         user1=dbconfig['user'] 
         password1=dbconfig['password']
-
         self.database1=dbconfig['database']
-        
+
         #connection establishment 
         self.con = mysql.connector.connect(host=host1,user=user1,password=password1,database=self.database1)
         self.con.autocommit=True
@@ -29,6 +28,7 @@ class user_model():
         data = self.cur.fetchall()
         if len(data)>0:
             res= make_response({'payload':data},200) #200 for ok, header response will create application-type:application/json
+            res.headers['Access-Control-Allow-Origin']="*" # * allow all type request
             return res
         else:
             return make_response({'payload':"No data Found in database"},204) #204 for no-content
@@ -39,7 +39,10 @@ class user_model():
         self.cur.execute(f"INSERT INTO USER(id,name,email,phone,role,password) \
                          VALUES('{data['id']}','{data['name']}','{data['email']}','{data['phone']}','{data['role']}','{data['password']}')")
         
-        return make_response({'payload':"Successfully Sumbited"},201)
+        if self.cur.rowcount>0:
+            return make_response({'payload':"Successfully Sumbited"},201)
+        else:
+            return make_response({'message':"already existed"},409)
     
     
 
@@ -56,4 +59,16 @@ class user_model():
         self.cur.execute(f"DELETE FROM user WHERE id={id}")
         
         return make_response({'payload': "Detail has been deleted" },200)
+    
+    def user_patch_model(self,data,id):
+        q  = f"UPDATE user SET "
+        for key in data:
+            q+=f"{key}='{data[key]}',"
+        q = q[:-1]+f" WHERE id={id}"
 
+        self.cur.execute(q)
+
+        if self.cur.rowcount>0:
+            return make_response({'message': 'Detail Updated Successfully'},201)
+        else:
+            return make_response({'messgae':'Detail not Updated'},202)
