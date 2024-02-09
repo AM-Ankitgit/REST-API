@@ -72,3 +72,30 @@ class user_model():
             return make_response({'message': 'Detail Updated Successfully'},201)
         else:
             return make_response({'messgae':'Detail not Updated'},202)
+        
+
+
+    def user_pagination_model(self,limit,page_no):
+        limit = int(limit)
+        page_no  = int(page_no)
+        start  = (page_no*limit)-limit
+
+        query = f"SELECT * FROM user LIMIT {start},{limit}"
+        self.cur.execute(query)
+        data = self.cur.fetchall()
+        # print(data)
+        if len(data)>0:
+            res= make_response({'payload':data,"limit":limit,'page_no':page_no},200) #200 for ok, header response will create application-type:application/json
+            return res
+        else:
+            return make_response({'payload':"No data Found in database"},204) #204 for no-content
+            # because of 204 will not send the payload no content mean no content
+        
+    #to update the file path in db
+    def user_avatar_model(self,uid,avatar_name):
+        self.cur.execute(f"UPDATE user SET avatar='{avatar_name}' WHERE id={uid}")
+
+        if self.cur.rowcount>0:
+            return make_response({'payload':"File Uploaded"},201)
+        else:
+            return make_response({'payload':"File Not Updated"},202) 

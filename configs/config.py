@@ -4,7 +4,7 @@ if os.name=='nt':
 else:
     dbconfig = {'host':"localhost",'port':3306,'user':'brain','password':"Brain@1927#",'database':'jan_flask_api'}
 
-
+upload_folder = "artifacts"
 
 
 RESPONSE_HEADER = {
